@@ -18,9 +18,28 @@ app.use(cors());
 //Leer y convertir el body a objeto js
 app.use(express.json());
 
-// Crear rutas
+// RUTAS
+app.get("/probando", (req, res) => {
+  console.log("Se ha ejecutado el enpoint probando");
+  return res.status(200).json([{
+    autor: "Napoleon",
+    country: "Colombia",
+    url: "codewizardai.com",
+  },
+  {
+    autor: "Napoleon",
+    country: "Colombia",
+    url: "codewizardai.com",
+  }]);
+});
+
+app.get("/", (req, res) => {
+  return res.status(200).send(`
+  <h1>Empezando a crear una api rest con node</h1>
+  `);
+});
 
 // Crear servidor y escuchar peticiones
-app.listen(puerto,()=>{
-  console.log("Server running on port "+puerto)
+app.listen(puerto, () => {
+  console.log("Server running on port " + puerto);
 });
