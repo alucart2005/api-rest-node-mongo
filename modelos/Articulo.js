@@ -1,13 +1,13 @@
-const { Schema, model } = requiere("mongoose");
+const { Schema, model } = require("mongoose");
 
 const ArticuloSchema = Schema({
   titulo: {
     type: String,
-    require: true,
+    required: true,
   },
   contenido: {
     type: String,
-    require: true,
+    required: true,
   },
   fecha: {
     type: Date,
@@ -19,4 +19,4 @@ const ArticuloSchema = Schema({
   },
 });
 
-module.exports = model("Articulo", ArticuloSchema, "articulos");
+module.exports = model("Articulo", ArticuloSchema);
