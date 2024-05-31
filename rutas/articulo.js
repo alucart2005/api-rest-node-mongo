@@ -9,5 +9,6 @@ router.get("/curso", ArticuloControlador.curso);
 
 // Ruta util
 router.post("/crear",ArticuloControlador.crear);  // POST para guardar un recurso
+router.get("/articulos",ArticuloControlador.listar )
 
 module.exports = router;
