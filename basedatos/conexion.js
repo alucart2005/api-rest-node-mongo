@@ -3,9 +3,7 @@ const mongoose = require("mongoose");
 const conexion = async () => {
   try {
     await mongoose.connect("mongodb://localhost:27017/mi_blog");
-    console.log(
-      "Established a successful connection to mi_blog database !!!"
-    );
+    console.log("Established a successful connection to mi_blog database !!!");
   } catch (error) {
     console.log(error);
     throw new Error("Database connection failed");
@@ -13,5 +11,5 @@ const conexion = async () => {
 };
 
 module.exports = {
-  conexion
+  conexion,
 };

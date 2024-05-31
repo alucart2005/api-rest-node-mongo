@@ -1,31 +1,50 @@
-const { Error } = require("mongoose");
-const Articulo = require("../modelos/Articulo");
-const validator = require("validator");
+const { Error } = require('mongoose'); // Importar la clase Error de Mongoose
+const Articulo = require('../modelos/Articulo'); // Importar el modelo de Artículo
 
+const validator = require('validator'); // Importar la biblioteca validator para validación de datos
+
+/**
+ * Controlador para la acción de prueba
+ *
+ * @param {Object} req Objeto de solicitud HTTP
+ * @param {Object} res Objeto de respuesta HTTP
+ */
 const prueba = (req, res) => {
   return res.status(200).json({
-    mensaje: "Soy una accion de prueba en mi controlador de articulos",
+    mensaje: 'Soy una accion de prueba en mi controlador de articulos',
   });
 };
 
+/**
+ * Controlador para el endpoint CURSO
+ *
+ * @param {Object} req Objeto de solicitud HTTP
+ * @param {Object} res Objeto de respuesta HTTP
+ */
 const curso = (req, res) => {
-  console.log("Se ha ejecutado el endpoint CURSO");
+  console.log('Se ha ejecutado el endpoint CURSO');
   return res.status(200).json([
     {
-      autor: "Napoleon",
-      country: "Colombia",
-      url: "codewizardai.com",
+      autor: 'Napoleon',
+      country: 'Colombia',
+      url: 'codewizardai.com',
     },
     {
-      autor: "Napoleon",
-      country: "Colombia",
-      url: "codewizardai.com",
+      autor: 'Napoleon',
+      country: 'Colombia',
+      url: 'codewizardai.com',
     },
   ]);
 };
 
+/**
+ * Controlador para crear un nuevo artículo
+ *
+ * @param {Object} req Objeto de solicitud HTTP
+ * @param {Object} res Objeto de respuesta HTTP
+ */
 const crear = async (req, res) => {
-  // Recoger los parametros por post a guardar
+  // Recoger los parámetros por post a guardar
   let parametros = req.body;
 
   // Validar datos
@@ -36,12 +55,12 @@ const crear = async (req, res) => {
     let validar_contenido = !validator.isEmpty(parametros.contenido);
 
     if (!validar_contenido || !validar_titulo) {
-      throw new Error("No se ha validado la informacion !!");
+      throw new Error('No se ha validado la informacion !!');
     }
   } catch (error) {
     return res.status(400).json({
-      status: "error",
-      mensaje: "Faltan datos por enviar",
+      status: 'error',
+      mensaje: 'Faltan datos por enviar',
     });
   }
 
@@ -51,19 +70,19 @@ const crear = async (req, res) => {
   // Asignar valores a objetos basado en el modelo (manual o automatico)
   // articulo.titulo = parametros.titulo
 
-  // Guardar el articulo en la base de datos
+  // Guardar el artículo en la base de datos
   try {
     const articuloGuardado = await articulo.save();
     return res.status(200).json({
-      mensaje: "success",
+      status: 'success',
       articulo: articuloGuardado,
-      mensaje: "Articulo creado con exito",
+      mensaje: 'Articulo creado con exito',
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      status: "error",
-      mensaje: "Error al guardar el artículo",
+      status: 'error',
+      mensaje: 'Error al guardar el artículo',
     });
   }
 };
