@@ -19,6 +19,10 @@ app.use(cors());
 app.use(express.json());
 
 // RUTAS
+
+
+
+// Rutas de pruebas hardcodeadas
 app.get("/probando", (req, res) => {
   console.log("Se ha ejecutado el enpoint probando");
   return res.status(200).json([{
