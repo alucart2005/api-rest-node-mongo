@@ -5,6 +5,8 @@ const ArticuloControlador = require("../controladores/articulo");
 
 // Ruta de prueba
 
-router.get("/ruta-e-prueba", ArticuloControlador.prueba);
+router.get("/ruta-de-prueba", ArticuloControlador.prueba); // nombre url, metodo a cargar
+
+router.get("/curso", ArticuloControlador.curso);
 
 module.exports = router;

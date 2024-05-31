@@ -19,22 +19,26 @@ app.use(cors());
 app.use(express.json());
 
 // RUTAS
+const rutas_articulo = require("./rutas/articulo");
 
-
+//Cargo mis rutas
+app.use("/api", rutas_articulo);
 
 // Rutas de pruebas hardcodeadas
 app.get("/probando", (req, res) => {
   console.log("Se ha ejecutado el enpoint probando");
-  return res.status(200).json([{
-    autor: "Napoleon",
-    country: "Colombia",
-    url: "codewizardai.com",
-  },
-  {
-    autor: "Napoleon",
-    country: "Colombia",
-    url: "codewizardai.com",
-  }]);
+  return res.status(200).json([
+    {
+      autor: "Napoleon",
+      country: "Colombia",
+      url: "codewizardai.com",
+    },
+    {
+      autor: "Napoleon",
+      country: "Colombia",
+      url: "codewizardai.com",
+    },
+  ]);
 });
 
 app.get("/", (req, res) => {
