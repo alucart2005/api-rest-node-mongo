@@ -20,7 +20,14 @@ const curso = (req, res) => {
   ]);
 };
 
+const crear = (req,res) =>{
+  return res.status(200).json({
+    mensaje: "Accion de guardar"
+  })
+}
+
 module.exports = {
   prueba,
   curso,
+  crear
 };
