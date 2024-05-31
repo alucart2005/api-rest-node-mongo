@@ -111,10 +111,14 @@ const listar = async (req, res) => {
    */
   try {
     // Busca todos los artículos en la colección "Articulo"
-    const articulos = await Articulo.find({});
+    let articulos = Articulo.find({});
+    if (req.params.ultimos) {
+      articulos = articulos.limit(3);
+    }
+    articulos = await articulos.sort({ fecha: -1 });
 
     // Verifica si se encontraron artículos
-    if (!articulos.length) {
+    if (!articulos) {
       // Si no se encontraron artículos, se envía una respuesta de error 404
       res.status(404).json({
         status: "error",
@@ -126,6 +130,8 @@ const listar = async (req, res) => {
     // Si se encontraron artículos, se envía una respuesta de éxito con los artículos
     res.status(200).json({
       status: "success",
+      parametro: req.params.ultimos,
+      contador: articulos.length,
       articulos,
     });
   } catch (error) {
@@ -138,13 +144,9 @@ const listar = async (req, res) => {
   }
 };
 
-
-
-
-
 module.exports = {
   prueba,
   curso,
   crear,
-  listar
+  listar,
 };
