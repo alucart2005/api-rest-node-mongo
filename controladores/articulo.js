@@ -1,6 +1,6 @@
 const { Error } = require("mongoose"); // Importar la clase Error de Mongoose
 const Articulo = require("../modelos/Articulo"); // Importar el modelo de Artículo
-const validator = require("validator"); // Importar la biblioteca validator para validación de datos
+const { validarArticulo } = require("../helpers/validar");
 
 /**
  * Controlador para la acción de prueba
@@ -42,36 +42,26 @@ const curso = (req, res) => {
  * @param {Object} req Objeto de solicitud HTTP
  * @param {Object} res Objeto de respuesta HTTP
  */
+
 const crear = async (req, res) => {
   // Recoger los parámetros por post a guardar
   let parametros = req.body;
   const articulo = new Articulo(parametros);
   // Validar datos
   try {
-    let validar_titulo =
-      !validator.isEmpty(parametros.titulo) &&
-      validator.isLength(parametros.titulo, { min: 5, max: 25 });
-    let validar_contenido = !validator.isEmpty(parametros.contenido);
-
-    if (!validar_contenido || !validar_titulo) {
-      throw new Error("No se ha validado la informacion !!");
-    }
+    validarArticulo(parametros);
   } catch (error) {
     return res.status(400).json({
       status: "error",
-      mensaje: "Faltan datos por enviar",
+      mensaje: "Faltan datos por enviar", //error.message, // Use the error message from the exception
     });
   }
-  // Crear el objeto a guardar
-  // Asignar valores a objetos basado en el modelo (manual o automatico)
-  // articulo.titulo = parametros.titulo
-  // Guardar el artículo en la base de datos
   try {
     const articuloGuardado = await articulo.save();
     return res.status(200).json({
       status: "success",
-      articulo: articuloGuardado,
       mensaje: "Articulo creado con exito",
+      articulo: articuloGuardado,
     });
   } catch (error) {
     console.error(error);
@@ -170,68 +160,10 @@ const borrar = async (req, res) => {
   }
 };
 
-/* VER 1.0
-const editar = async (req, res) => {
-  let articuloId = req.params.id;
-  let parametros = req.body;
-
-  try {
-    let validar_titulo =
-      !validator.isEmpty(parametros.titulo) &&
-      validator.isLength(parametros.titulo, { min: 5, max: 25 });
-    let validar_contenido = !validator.isEmpty(parametros.contenido);
-
-    if (!validar_contenido || !validar_titulo) {
-      throw new Error("No se ha validado la informacion !!");
-    }
-  } catch (error) {
-    return res.status(400).json({
-      status: "error",
-      mensaje: "Faltan datos por enviar",
-    });
-  }
-
-  try {
-    const articulo = await Articulo.findOneAndUpdate(
-      { _id: articuloId },
-      req.body,
-      {new:true},
-
-    );
-    return res.status(200).json({
-      status: "success",
-      mensaje: "Articulo modificado con exito",
-      articulo: articulo,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      status: "error",
-      mensaje: "Error al editar el artículo",
-    });
-  }
-};
-*/
-
-/* VERSION 2.0
+// VERSION 4
 const editar = async (req, res) => {
   const articuloId = req.params.id;
   const parametros = req.body;
-
-  try {
-    // Validate title and content
-    const isValidTitle = !validator.isEmpty(parametros.titulo) && validator.isLength(parametros.titulo, { min: 5, max: 25 });
-    const isValidContent = !validator.isEmpty(parametros.contenido);
-
-    if (!isValidTitle || !isValidContent) {
-      throw new Error("Información no válida. Revise los campos título y contenido.");
-    }
-  } catch (error) {
-    return res.status(400).json({
-      status: "error",
-      mensaje: error.message, // Use the error message from the exception
-    });
-  }
 
   try {
     // Update the article
@@ -240,6 +172,14 @@ const editar = async (req, res) => {
       parametros,
       { new: true } // Return the updated document
     );
+    try {
+      validarArticulo(parametros);
+    } catch (error) {
+      return res.status(400).json({
+        status: "error",
+        mensaje: "Faltan datos por enviar", //error.message, // Use the error message from the exception
+      });
+    }
 
     if (!updatedArticle) {
       return res.status(404).json({
@@ -257,67 +197,7 @@ const editar = async (req, res) => {
     console.error(error);
     return res.status(500).json({
       status: "error",
-      mensaje: "Error al editar el artículo.",
-    });
-  }
-};
-*/
-
-//VERSION 3
-const editar = async (req, res) => {
-  const articuloId = req.params.id;
-  const parametros = req.body;
-
-  
-  validarArticulo(res, parametros);
-
-
-  try {
-    // Update the article
-    const updatedArticle = await Articulo.findOneAndUpdate(
-      { _id: articuloId },
-      parametros,
-      { new: true } // Return the updated document
-    );
-
-    if (!updatedArticle) {
-      return res.status(404).json({
-        status: "error",
-        mensaje: "No se encontró el artículo para editar.",
-      });
-    }
-
-    return res.status(200).json({
-      status: "success",
-      mensaje: "Artículo modificado con éxito.",
-      articulo: updatedArticle,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      status: "error",
-      mensaje: "Error al editar el artículo.",
-    });
-  }
-};
-
-const validarArticulo = (res, parametros) => {
-  try {
-    // Validate title and content
-    const isValidTitle =
-      !validator.isEmpty(parametros.titulo) &&
-      validator.isLength(parametros.titulo, { min: 5, max: 25 });
-    const isValidContent = !validator.isEmpty(parametros.contenido);
-
-    if (!isValidTitle || !isValidContent) {
-      throw new Error(
-        "Información no válida. Revise los campos título y contenido."
-      );
-    }
-  } catch (error) {
-    return res.status(400).json({
-      status: "error",
-      mensaje: "No se ha validado la informacion", //error.message, // Use the error message from the exception
+      mensaje: "No existe el articulo a editar",
     });
   }
 };
