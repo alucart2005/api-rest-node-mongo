@@ -268,24 +268,9 @@ const editar = async (req, res) => {
   const articuloId = req.params.id;
   const parametros = req.body;
 
-  try {
-    // Validate title and content
-    const isValidTitle =
-      !validator.isEmpty(parametros.titulo) &&
-      validator.isLength(parametros.titulo, { min: 5, max: 25 });
-    const isValidContent = !validator.isEmpty(parametros.contenido);
+  
+  validarArticulo(res, parametros);
 
-    if (!isValidTitle || !isValidContent) {
-      throw new Error(
-        "Información no válida. Revise los campos título y contenido."
-      );
-    }
-  } catch (error) {
-    return res.status(400).json({
-      status: "error",
-      mensaje: "No se ha validado la informacion"//error.message, // Use the error message from the exception
-    });
-  }
 
   try {
     // Update the article
@@ -312,6 +297,27 @@ const editar = async (req, res) => {
     return res.status(500).json({
       status: "error",
       mensaje: "Error al editar el artículo.",
+    });
+  }
+};
+
+const validarArticulo = (res, parametros) => {
+  try {
+    // Validate title and content
+    const isValidTitle =
+      !validator.isEmpty(parametros.titulo) &&
+      validator.isLength(parametros.titulo, { min: 5, max: 25 });
+    const isValidContent = !validator.isEmpty(parametros.contenido);
+
+    if (!isValidTitle || !isValidContent) {
+      throw new Error(
+        "Información no válida. Revise los campos título y contenido."
+      );
+    }
+  } catch (error) {
+    return res.status(400).json({
+      status: "error",
+      mensaje: "No se ha validado la informacion", //error.message, // Use the error message from the exception
     });
   }
 };
