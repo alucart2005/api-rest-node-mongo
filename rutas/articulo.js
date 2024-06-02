@@ -8,7 +8,9 @@ router.get("/ruta-de-prueba", ArticuloControlador.prueba); // nombre url, metodo
 router.get("/curso", ArticuloControlador.curso);
 
 // Ruta util
-router.post("/crear",ArticuloControlador.crear);  // POST para guardar un recurso
-router.get("/articulos/:ultimos?",ArticuloControlador.listar )
+router.post("/crear", ArticuloControlador.crear); // POST para guardar un recurso
+router.get("/articulos/:ultimos?", ArticuloControlador.listar);
+router.get("/articulo/:id", ArticuloControlador.uno);
+router.put("/articulo/:id", ArticuloControlador.editar);
 
 module.exports = router;

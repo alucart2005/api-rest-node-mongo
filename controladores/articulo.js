@@ -45,7 +45,7 @@ const curso = (req, res) => {
 const crear = async (req, res) => {
   // Recoger los parámetros por post a guardar
   let parametros = req.body;
-
+  const articulo = new Articulo(parametros);
   // Validar datos
   try {
     let validar_titulo =
@@ -62,13 +62,9 @@ const crear = async (req, res) => {
       mensaje: "Faltan datos por enviar",
     });
   }
-
   // Crear el objeto a guardar
-  const articulo = new Articulo(parametros);
-
   // Asignar valores a objetos basado en el modelo (manual o automatico)
   // articulo.titulo = parametros.titulo
-
   // Guardar el artículo en la base de datos
   try {
     const articuloGuardado = await articulo.save();
@@ -85,21 +81,6 @@ const crear = async (req, res) => {
     });
   }
 };
-
-// const conseguirArticulos = async (req, res) => {
-//   let consulta = Articulo.find({}).exec((error, articulos) => {
-//     if (error || !articulos) {
-//       return res.status(404).json({
-//         status: "error",
-//         mensaje: "No se han encontrado articulos !!",
-//       });
-//     }
-//     return res.status(200).send({
-//       status: "success",
-//       articulos
-//     })
-//   });
-// };
 
 const listar = async (req, res) => {
   /**
@@ -144,9 +125,203 @@ const listar = async (req, res) => {
   }
 };
 
+const uno = async (req, res) => {
+  try {
+    // Retrieve the ID from the URL parameters
+    const id = req.params.id;
+    // Find the article using async/await
+    const articulo = await Articulo.findById(id);
+    // Check if the article exists
+    if (!articulo) {
+      throw new Error("No se ha encontrado el artículo");
+    }
+    // Send a success response with the article
+    res.status(200).json({
+      status: "success",
+      articulo,
+    });
+  } catch (error) {
+    // Handle errors and send an error response
+    console.error(error);
+    res.status(404).json({
+      status: "error",
+      mensaje: "No se ha encontrado el artículo",
+    });
+  }
+};
+
+const borrar = async (req, res) => {
+  try {
+    const articulo_id = req.params.id;
+    const articulo = await Articulo.findOneAndDelete({ _id: articulo_id });
+    if (!articulo) {
+      throw new Error("No se ha encontrado el artículo a borrar");
+    }
+    res.status(200).json({
+      status: "success",
+      mensaje: "Articulo borrado",
+      articulo: articulo,
+    });
+  } catch (error) {
+    res.status(404).json({
+      status: "error",
+      mensaje: "No se ha encontrado el artículo a borrar",
+    });
+  }
+};
+
+/* VER 1.0
+const editar = async (req, res) => {
+  let articuloId = req.params.id;
+  let parametros = req.body;
+
+  try {
+    let validar_titulo =
+      !validator.isEmpty(parametros.titulo) &&
+      validator.isLength(parametros.titulo, { min: 5, max: 25 });
+    let validar_contenido = !validator.isEmpty(parametros.contenido);
+
+    if (!validar_contenido || !validar_titulo) {
+      throw new Error("No se ha validado la informacion !!");
+    }
+  } catch (error) {
+    return res.status(400).json({
+      status: "error",
+      mensaje: "Faltan datos por enviar",
+    });
+  }
+
+  try {
+    const articulo = await Articulo.findOneAndUpdate(
+      { _id: articuloId },
+      req.body,
+      {new:true},
+
+    );
+    return res.status(200).json({
+      status: "success",
+      mensaje: "Articulo modificado con exito",
+      articulo: articulo,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: "error",
+      mensaje: "Error al editar el artículo",
+    });
+  }
+};
+*/
+
+/* VERSION 2.0
+const editar = async (req, res) => {
+  const articuloId = req.params.id;
+  const parametros = req.body;
+
+  try {
+    // Validate title and content
+    const isValidTitle = !validator.isEmpty(parametros.titulo) && validator.isLength(parametros.titulo, { min: 5, max: 25 });
+    const isValidContent = !validator.isEmpty(parametros.contenido);
+
+    if (!isValidTitle || !isValidContent) {
+      throw new Error("Información no válida. Revise los campos título y contenido.");
+    }
+  } catch (error) {
+    return res.status(400).json({
+      status: "error",
+      mensaje: error.message, // Use the error message from the exception
+    });
+  }
+
+  try {
+    // Update the article
+    const updatedArticle = await Articulo.findOneAndUpdate(
+      { _id: articuloId },
+      parametros,
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedArticle) {
+      return res.status(404).json({
+        status: "error",
+        mensaje: "No se encontró el artículo para editar.",
+      });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      mensaje: "Artículo modificado con éxito.",
+      articulo: updatedArticle,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: "error",
+      mensaje: "Error al editar el artículo.",
+    });
+  }
+};
+*/
+
+//VERSION 3
+const editar = async (req, res) => {
+  const articuloId = req.params.id;
+  const parametros = req.body;
+
+  try {
+    // Validate title and content
+    const isValidTitle =
+      !validator.isEmpty(parametros.titulo) &&
+      validator.isLength(parametros.titulo, { min: 5, max: 25 });
+    const isValidContent = !validator.isEmpty(parametros.contenido);
+
+    if (!isValidTitle || !isValidContent) {
+      throw new Error(
+        "Información no válida. Revise los campos título y contenido."
+      );
+    }
+  } catch (error) {
+    return res.status(400).json({
+      status: "error",
+      mensaje: "No se ha validado la informacion"//error.message, // Use the error message from the exception
+    });
+  }
+
+  try {
+    // Update the article
+    const updatedArticle = await Articulo.findOneAndUpdate(
+      { _id: articuloId },
+      parametros,
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedArticle) {
+      return res.status(404).json({
+        status: "error",
+        mensaje: "No se encontró el artículo para editar.",
+      });
+    }
+
+    return res.status(200).json({
+      status: "success",
+      mensaje: "Artículo modificado con éxito.",
+      articulo: updatedArticle,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: "error",
+      mensaje: "Error al editar el artículo.",
+    });
+  }
+};
+
 module.exports = {
   prueba,
   curso,
   crear,
   listar,
+  uno,
+  borrar,
+  editar,
 };
