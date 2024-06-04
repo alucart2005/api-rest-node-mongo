@@ -1,14 +1,13 @@
 const express = require("express");
 const multer = require("multer");
+const ArticuloControlador = require("../controladores/articulo");
 const router = express.Router();
 
-const ArticuloControlador = require("../controladores/articulo");
-
 const almacenamiento = multer.diskStorage({
-  destination: (req, file, cb) => {
+  destination: function(req, file, cb){
     cb(null, "./imagenes/articulos/");
   },
-  filename: (req, file, cb) => {
+  filename: function(req, file, cb){
     cb(null, "/articulo" + Date.now() + file.originalname);
   },
 });

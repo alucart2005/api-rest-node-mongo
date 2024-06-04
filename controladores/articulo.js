@@ -1,7 +1,8 @@
+const fs = require("fs");
 const { Error } = require("mongoose"); // Importar la clase Error de Mongoose
 const Articulo = require("../modelos/Articulo"); // Importar el modelo de Artículo
 const { validarArticulo } = require("../helpers/validar");
-
+const { error } = require("console");
 /**
  * Controlador para la acción de prueba
  *
@@ -201,28 +202,51 @@ const editar = async (req, res) => {
   }
 };
 
-const subir = async (req,res)=>{
-
+const subir = async (req, res) => {
   // Configurar Muter
 
   // Recoger el fichero de imagen subida
+  if (!req.file && !req.files) {
+    return res.status(404).json({
+      status: "error",
+      mensaje: "Peticion invalida",
+    });
+  }
+
+  // Nombre del archivo
+  let archivo = req.file.originalname;
 
   // Conseguier el nombre del archivo
+  let archivo_split = archivo.split(".");
 
   // Conseguier la extension del archivo
+  let extension = archivo_split[1];
 
   // Comprobar la extension correcta
+  if (
+    extension != "png" &&
+    extension != "jpg" &&
+    extension != "jpeg" &&
+    extension != "gif"
+  ) {
+    fs.unlink(req.file.path, (error) => {
+      return res.status(400).json({
+        status: "error",
+        mensaje: "Imagen invalida",
+      });
+    });
+  } else {
+    return res.status(200).json({
+      status: "success",
+      archivo_split,
+      files: req.file,
+    });
+  }
 
   // si todo va bien actualizar el articulo
 
   // Devolver respuesta
-  
-
-
-  return res.status(200).json({
-    status:"success"
-  })
-}
+};
 
 module.exports = {
   prueba,
@@ -232,5 +256,5 @@ module.exports = {
   uno,
   borrar,
   editar,
-  subir
+  subir,
 };
