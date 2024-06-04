@@ -204,7 +204,6 @@ const editar = async (req, res) => {
 
 const subir = async (req, res) => {
   // Configurar Muter
-
   // Recoger el fichero de imagen subida
   if (!req.file && !req.files) {
     return res.status(404).json({
@@ -212,16 +211,12 @@ const subir = async (req, res) => {
       mensaje: "Peticion invalida",
     });
   }
-
   // Nombre del archivo
   let archivo = req.file.originalname;
-
   // Conseguier el nombre del archivo
   let archivo_split = archivo.split(".");
-
   // Conseguier la extension del archivo
   let extension = archivo_split[1];
-
   // Comprobar la extension correcta
   if (
     extension != "png" &&
