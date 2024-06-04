@@ -160,7 +160,6 @@ const borrar = async (req, res) => {
   }
 };
 
-// VERSION 4
 const editar = async (req, res) => {
   const articuloId = req.params.id;
   const parametros = req.body;
@@ -202,6 +201,29 @@ const editar = async (req, res) => {
   }
 };
 
+const subir = async (req,res)=>{
+
+  // Configurar Muter
+
+  // Recoger el fichero de imagen subida
+
+  // Conseguier el nombre del archivo
+
+  // Conseguier la extension del archivo
+
+  // Comprobar la extension correcta
+
+  // si todo va bien actualizar el articulo
+
+  // Devolver respuesta
+  
+
+
+  return res.status(200).json({
+    status:"success"
+  })
+}
+
 module.exports = {
   prueba,
   curso,
@@ -210,4 +232,5 @@ module.exports = {
   uno,
   borrar,
   editar,
+  subir
 };
