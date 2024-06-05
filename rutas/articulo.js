@@ -8,7 +8,7 @@ const almacenamiento = multer.diskStorage({
     cb(null, "./imagenes/articulos/");
   },
   filename: function(req, file, cb){
-    cb(null, "/articulo" + Date.now() + file.originalname);
+    cb(null, "articulo" + Date.now() + file.originalname);
   },
 });
 
@@ -24,5 +24,6 @@ router.get("/articulos/:ultimos?", ArticuloControlador.listar);
 router.get("/articulo/:id", ArticuloControlador.uno);
 router.put("/articulo/:id", ArticuloControlador.editar);
 router.post("/subir-imagen/:id", [subidas.single("file0")], ArticuloControlador.subir);
+router.get("/imagen/:fichero", ArticuloControlador.imagen);
 
 module.exports = router;
