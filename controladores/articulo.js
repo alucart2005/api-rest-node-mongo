@@ -1,8 +1,8 @@
 const fs = require("fs");
-const { Error } = require("mongoose"); // Importar la clase Error de Mongoose
+const path = require("path");
 const Articulo = require("../modelos/Articulo"); // Importar el modelo de Artículo
 const { validarArticulo } = require("../helpers/validar");
-const { error } = require("console");
+const { Error } = require("mongoose"); // Importar la clase Error de Mongoose
 /**
  * Controlador para la acción de prueba
  *
@@ -217,7 +217,8 @@ const subir = async (req, res) => {
   let archivo_split = archivo.split(".");
   // Conseguier la extension del archivo
   let extension = archivo_split[1];
-  // Comprobar la extension correcta
+
+  //Comprobar la extension correcta
   if (
     extension != "png" &&
     extension != "jpg" &&
@@ -231,16 +232,47 @@ const subir = async (req, res) => {
       });
     });
   } else {
+    const articuloId = req.params.id;
+    // Update the article
+    const updatedArticle = await Articulo.findOneAndUpdate(
+      { _id: articuloId },
+      { imagen: req.file.filename },
+      { new: true } // Return the updated document
+    );
+    if (!updatedArticle) {
+      return res.status(500).json({
+        status: "error",
+        mensaje: "Error al actualizar.",
+      });
+    }
     return res.status(200).json({
       status: "success",
-      archivo_split,
-      files: req.file,
+      mensaje: "Artículo modificado con éxito.",
+      articulo: updatedArticle,
+      fichero: req.file,
     });
   }
-
   // si todo va bien actualizar el articulo
-
   // Devolver respuesta
+};
+/*  VERSION OLD */
+const imagen = (req, res) => {
+  let fichero = req.params.fichero;
+  let ruta_fisica = "./imagenes/articulos/" + fichero;
+
+  fs.stat(ruta_fisica, (error, existe) => {
+    if (existe) {
+      return res.sendFile(path.resolve(ruta_fisica));
+    } else {
+      return res.status(404).json({
+        status: "error",
+        mensaje: "La imagen no existe.",
+        existe: existe,
+        fichero,
+        ruta_fisica,
+      });
+    }
+  });
 };
 
 module.exports = {
@@ -252,4 +284,5 @@ module.exports = {
   borrar,
   editar,
   subir,
+  imagen,
 };
