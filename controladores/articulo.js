@@ -108,10 +108,10 @@ const listar = async (req, res) => {
     });
   } catch (error) {
     // Captura cualquier error que ocurra durante la ejecución del código
-    console.error(error);
     res.status(500).json({
       status: "error",
-      mensaje: "Error al obtener artículos",
+      mensaje: "Se ha producido un error",
+      error
     });
   }
 };
@@ -124,7 +124,8 @@ const uno = async (req, res) => {
     const articulo = await Articulo.findById(id);
     // Check if the article exists
     if (!articulo) {
-      throw new Error("No se ha encontrado el artículo");
+      throw new Error("Ha ocurrido un error");
+
     }
     // Send a success response with the article
     res.status(200).json({
@@ -274,6 +275,13 @@ const imagen = (req, res) => {
     }
   });
 };
+const buscador = (req,res) =>{
+  try {
+    
+  } catch (error) {
+    
+  }
+}
 
 module.exports = {
   prueba,
