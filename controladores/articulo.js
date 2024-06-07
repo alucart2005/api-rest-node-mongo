@@ -111,7 +111,7 @@ const listar = async (req, res) => {
     res.status(500).json({
       status: "error",
       mensaje: "Se ha producido un error",
-      error
+      error,
     });
   }
 };
@@ -125,7 +125,6 @@ const uno = async (req, res) => {
     // Check if the article exists
     if (!articulo) {
       throw new Error("Ha ocurrido un error");
-
     }
     // Send a success response with the article
     res.status(200).json({
@@ -275,13 +274,30 @@ const imagen = (req, res) => {
     }
   });
 };
-const buscador = (req,res) =>{
+
+const buscador = async (req, res) => {
   try {
-    
+    let busqueda = req.params.busqueda;
+    const articulosEncontrados = await Articulo.find({
+      $or: [
+        { titulo: { $regex: busqueda, $options: "i" } },
+        { contenido: { $regex: busqueda, $options: "i" } },
+      ],
+    }).sort({ fecha: -1 });
+    if (!articulosEncontrados.length) {
+      throw new Error("Ha ocurrido un error");
+    }
+    res.status(200).json({
+      status: "success",
+      articulos: articulosEncontrados,
+    });
   } catch (error) {
-    
+    res.status(404).json({
+      status: "error",
+      mensaje: "No se han encontrado el artículo",
+    });
   }
-}
+};
 
 module.exports = {
   prueba,
@@ -293,4 +309,5 @@ module.exports = {
   editar,
   subir,
   imagen,
+  buscador,
 };
